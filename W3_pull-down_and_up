@@ -1,0 +1,26 @@
+#include <msp430.h>
+unsigned value;
+int main(void)
+{
+
+    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
+    P1DIR |= BIT0 + BIT6 ;     // set P1.0 & P1.6 as output
+    P1DIR &=~ BIT7;             // set P1.7 as input
+    P1REN |= BIT7;
+   // P1OUT |= BIT7;          //pull-up
+    P1OUT &=~ BIT7;           //pull-down
+
+    while(1){
+        value = P1IN & BIT7;        // mask for BIT7
+        if(value==BIT7){        // if P1.7 = H
+            P1OUT |= BIT0;          // toggle P1.0
+            P1OUT &=~ BIT6;
+        }
+        else{
+            P1OUT |= BIT6;
+            P1OUT &=~ BIT0;
+        }
+        __delay_cycles(1000000);
+    }
+
+}
